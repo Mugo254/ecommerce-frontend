@@ -21,11 +21,13 @@ import {
 } from "../features/wishlist/wishlistSlice";
 import { toast } from "react-toastify";
 import { store } from "../store";
+import axiosInstance from '../../serverUrl';
+
 
 export const singleProductLoader = async ({ params }) => {
   const { id } = params;
 
-  const response = await axios(`http://127.0.0.1:8000/api/product/product/${id}/`);
+  const response = await axiosInstance.get(`product/product/${id}/`);
 
   return { productData: response.data };
 };
