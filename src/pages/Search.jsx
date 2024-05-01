@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { ProductElement, SectionTitle } from "../components";
 import { nanoid } from "nanoid";
+import axiosInstance from '../../serverUrl';
+
 
 const Search = () => {
   const [products, setProducts] = useState([]);
@@ -13,8 +15,8 @@ const Search = () => {
     setSearchTerm(e.target.search.value);
 
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/product/product/search/?q=${e.target.search.value}`
+      const response = await axiosInstance.get(
+        `product/product/search/?q=${e.target.search.value}`
       );
       const data = response.data;
       setProducts(data);

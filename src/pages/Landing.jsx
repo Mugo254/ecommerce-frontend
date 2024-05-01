@@ -1,12 +1,13 @@
 import "../styles/Landing.css";
 import { Hero, ProductElement, Stats } from "../components";
 import { useLoaderData } from "react-router-dom";
-import axios from "axios";
+
+import axiosInstance from '../../serverUrl';
 
 export const landingLoader = async () => {
 
-  const response = await axios.get(
-    'http://localhost:8000/api/product/products/'
+  const response = await axiosInstance.get(
+    'product/products/'
     
   );
   const data = response.data;
@@ -21,8 +22,6 @@ const Landing = () => {
   return (
     <main>
       <Hero />
-      <Stats />
-
       <div className="selected-products">
         <h2 className="text-6xl text-center my-12 max-md:text-4xl text-accent-content">
           Trending Products

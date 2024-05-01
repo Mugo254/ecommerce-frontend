@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { store } from "../store";
 import { loginUser, logoutUser } from "../features/auth/authSlice";
+import axiosInstance from '../../serverUrl';
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -37,29 +39,24 @@ const Login = () => {
     e.preventDefault();
 
     if (isValidate()) {
-      fetch("http://localhost:8000/api/user/login/", {
-        method: "POST",
+      axiosInstance.post("user/login/", {
+        email: email,
+        password: password
+      }, {
         headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+          "Content-Type": "application/json"
+        }
       })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Invalid Credentials");
-          }
-          return res.json();
-        })
-        .then((res) => {
-          toast.success("Login successful");
-          localStorage.setItem("id", res.data.id);
-          localStorage.setItem("accessToken", res.data.tokens.refresh);
-          store.dispatch(loginUser());
-          navigate("/");
-        })
-        .catch((err) => {
-          toast.error("Login failed due to: " + err.message);
-        });
+      .then((response) => {
+        toast.success("Login successful");
+        localStorage.setItem("id", response.data.data.id);
+        localStorage.setItem("accessToken", response.data.data.tokens.access);
+        store.dispatch(loginUser());
+        navigate("/");
+      })
+      .catch((error) => {
+        toast.error("Login failed due to: " + error.message);
+      });
     }
   };
 

@@ -9,6 +9,8 @@ import "../styles/Shop.css";
 import axios from "axios";
 import { useLoaderData, useNavigate, useSearchParams } from "react-router-dom";
 import { nanoid } from "nanoid";
+import axiosInstance from '../../serverUrl';
+
 
 export const shopLoader = async ({ request }) => {
   const params = Object.fromEntries([
@@ -29,8 +31,8 @@ export const shopLoader = async ({ request }) => {
     (filterObj.price !== 'all' ? `&price.current.value_lte=${filterObj.price}` : ``)
 
   try {
-    const response = await axios(
-      `http://localhost:8000/api/product/product/filter/?${parameter}`
+    const response = await axiosInstance.get(
+      `product/product/filter/?${parameter}`
 
     );
     let data = response.data;

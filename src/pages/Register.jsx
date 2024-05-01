@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { SectionTitle } from "../components";
 import { nanoid } from "nanoid";
 import { toast } from "react-toastify";
+import axiosInstance from '../../serverUrl';
+
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -23,9 +25,9 @@ const Register = () => {
     }else if (email.length === 0) {
       isProceed = false;
       errorMessage = "Please enter the value in email field";
-    } else if (phone.length < 4) {
+    } else if (phone.length < 10) {
       isProceed = false;
-      errorMessage = "Phone must be longer than 3 characters";
+      errorMessage = "Phone must be longer than 10 characters";
     } else if (password.length < 6) {
       isProceed = false;
       errorMessage = "Please enter a password longer than 5 characters";
@@ -47,36 +49,25 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    let regObj = {
-      id: nanoid(),
-      name,
-      
-      email,
-      phone,
-      
-      password,
-      // userWishlist: [],
-    };
 
     if (isValidate()) {
-      fetch("http://localhost:8080/api/user/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(regObj),
+      axiosInstance.post("user/register/", {
+        full_name: name,
+        phone_number: phone,
+        email: email,
+        password: password,
+      }, {
+        headers: {
+          "Content-Type": "application/json"
+        }
       })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return res.json();
-        })
-        .then((res) => {
-          toast.success("Registration Successful");
-          navigate("/login");
-        })
-        .catch((err) => {
-          toast.error("Failed: " + err.message);
-        });
+      .then((response) => {
+        toast.success("Registration successful");
+        navigate("/login");
+      })
+      .catch((error) => {
+        toast.error("Registration failed due to: " + error.message);
+      });
     }
   };
   return (

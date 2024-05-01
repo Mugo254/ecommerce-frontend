@@ -4,6 +4,8 @@ import { Form, Link } from "react-router-dom";
 import FormRange from "./FormRange";
 import FormSelect from "./FormSelect";
 import axios from "axios";
+import axiosInstance from '../../serverUrl';
+
 
 
 const Filters = () => {
@@ -12,7 +14,7 @@ const Filters = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/product/categories/');
+        const response = await axiosInstance.get('product/categories/');
 
         const categories = response.data.results;
         const categoryNames = categories.map(category => category.name); // Extract category names from each object 

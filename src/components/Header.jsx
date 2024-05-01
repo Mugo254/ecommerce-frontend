@@ -1,36 +1,62 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { FaHeadphones } from "react-icons/fa6";
-import { FaRegEnvelope } from "react-icons/fa6";
 import { HiMiniBars3BottomLeft } from "react-icons/hi2";
-import { FaHeart } from "react-icons/fa6";
 import { AiFillShopping } from "react-icons/ai";
-import { FaSun } from "react-icons/fa6";
-import { FaMoon } from "react-icons/fa6";
 import { FaWindowClose } from "react-icons/fa";
 
 import "../styles/Header.css";
-import { useDispatch, useSelector } from "react-redux";
-import { store } from "../store";
-import axios from "axios";
+import { useSelector } from "react-redux";
 import { clearWishlist, updateWishlist } from "../features/wishlist/wishlistSlice";
+import axiosInstance from '../../serverUrl';
+
 
 const Header = () => {
-  const { amount } = useSelector((state) => state.cart);
   const { total } = useSelector((state) => state.cart);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [id, setId] = useState(localStorage.getItem("id"));
-  const dispatch = useDispatch();
-  const { darkMode } = useSelector((state) => state.auth);
+
+  const [profileImage, setProfileImage] = useState('');
+
 
   const loginState = useSelector((state) => state.auth.isLoggedIn);
   const cartItems = useSelector((state) => state.cart.cartItems);
 
 
 
+    // Function to fetch the profile image
+    const fetchProfileImage = async () => {
+      try {
+        // Get user ID from local storage
+        const userId = localStorage.getItem('id');
+        const accessToken = localStorage.getItem('accessToken');
+  
+        if (userId) {
+          const response = await axiosInstance.get(`user/user-details/?id=${userId}`,{
+            headers:{
+              'Authorization':'JWT ' + accessToken
+            }
+          });
+
+          // Extract profile image URL from response data
+          const imageUrl = response.data.results[0].profile_picture;
+  
+          // Update state with profile image URL
+          setProfileImage(imageUrl);
+        }
+      } catch (error) {
+
+        setProfileImage('https://xsgames.co/randomusers/avatar.php?g=male')  
+
+        console.error('Error fetching profile image:', error);
+      }
+    };
+  
+
+
+
 
   useEffect(() => {
     setIsLoggedIn(loginState);
+    fetchProfileImage();
 
     
   }, [loginState]);
@@ -119,7 +145,8 @@ const Header = () => {
             <div className="dropdown dropdown-end">
               <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
                 <div className="w-10 rounded-full">
-                  <img src="https://xsgames.co/randomusers/avatar.php?g=male" />
+             
+                  <img src={profileImage} />
                 </div>
               </label>
               <ul

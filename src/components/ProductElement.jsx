@@ -8,7 +8,7 @@ const ProductElement = ({ id, title, image, price }) => {
         <Link to={`/shop/product/${id}`} onClick={() => window.scrollTo(0, 0)}>
           <img
             className="rounded-t-lg p-8"
-            src={`http://localhost:8000${image}`}
+            src={image}
             alt="product image"
           />
         </Link>
